@@ -8,6 +8,9 @@ shinyUI(fluidPage(
   
     sidebarLayout(
       sidebarPanel(
+        tags$head( tags$script(src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full", type = 'text/javascript'),
+                   tags$script( "MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});", type='text/x-mathjax-config')
+        ),
 #    column(4,
            h3("Required Input:"),
            wellPanel(
@@ -28,30 +31,30 @@ shinyUI(fluidPage(
            h3("Optional Input:"),
            wellPanel(                         
              numericInput("VE1",
-                        label=helpText("1-dose Vaccine Efficacy (default based on point estimate from meta-analysis)"),
+                        label=helpText("1-dose Vaccine Efficacy [default based on point estimate from meta-analysis]"),
                         value=0.44,
                         min=0,
                         max=1),
            numericInput("VE2",
-                        label=helpText("2-dose Vaccine Efficacy (default based on point estimate from meta-analysis)"),
+                        label=helpText("2-dose Vaccine Efficacy [default based on point estimate from meta-analysis]"),
                         value=0.73,
                         min=0,
                         max=1),
            numericInput("R.pes",
-                        label=helpText("Reproductive Number (pessimistic)"),
+                        label=helpText("Reproductive Number [pessimistic]"),
                         value=2,
                         min=1                      
            ),
            numericInput("R.mod",
-                        label=helpText("Reproductive Number (moderate)"),
+                        label=helpText("Reproductive Number [moderate]"),
                         value=1.5,
                         min=1),
            numericInput("R.opt",
-                        label=helpText("Reproductive Number (optimisitic)"),
+                        label=helpText("Reproductive Number [optimisitic]"),
                         value=1.1,
                         min=1),
            sliderInput("pct.uncer",
-                        label=helpText("Margin of Error (+/- percent of estimate) \n This dictates the width of the colored regions and is a bit adhoc for now"),
+                        label=helpText("Margin of Error [+/- percent of estimate] \n This dictates the width of the colored regions and is a bit adhoc for now"),
                         value=0.3,
                         min=0,
                         max=1)          
@@ -66,5 +69,7 @@ shinyUI(fluidPage(
 mainPanel(
   h3("Estimated Proportion Protected Compared to Vaccination Zones in 3 Different Scenarios"),
   plotOutput('my.plot'),
+  "The interface between yellow and red in each corresponds to the estimate of 1-1/R:",
+  tabPanel('Proportion Needed to Protect (point estimates)', tableOutput("table")),
   h5("Warning: The above output is based on basic epidemic theory and should only be used as a rough guide. \n")
   ))))
