@@ -4,7 +4,7 @@
 library(shiny)
 
 shinyUI(fluidPage(
-  titlePanel("Tool for OCV Vaccination"),
+  titlePanel("Tool for Assessing Risk of Epidemic given OCV Vaccination Coverage Estimates"),
   
     sidebarLayout(
       sidebarPanel(
@@ -49,13 +49,22 @@ shinyUI(fluidPage(
            numericInput("R.opt",
                         label=helpText("Reproductive Number (optimisitic)"),
                         value=1.1,
-                        min=1                      
-           ))
+                        min=1),
+           sliderInput("pct.uncer",
+                        label=helpText("Margin of Error (+/- percent of estimate) \n This dictates the width of the colored regions and is a bit adhoc for now"),
+                        value=0.3,
+                        min=0,
+                        max=1)          
+           ),
+           "Source code can be found ",
+           a("here", href="https://github.com/scottyaz/propvac"),
+           br(),  
+           "Brought to you by the",
+           a(" Infectious Disease Dynamics Group",href="http://iddynamics.jhsph.edu/"),
+           "at Johns Hopkins Bloomberg School of Public Health"
       ),
 mainPanel(
   h3("Estimated Proportion Protected Compared to Vaccination Zones in 3 Different Scenarios"),
   plotOutput('my.plot'),
-  h5("Warning: The above output is based on basic epidemic theory and should only be used as a rough guide. \n"),
-  "Source code can be found at our ",
-  a("GitHub page", href="link.com")
+  h5("Warning: The above output is based on basic epidemic theory and should only be used as a rough guide. \n")
   ))))

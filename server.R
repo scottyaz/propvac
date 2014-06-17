@@ -15,7 +15,7 @@ shinyServer(function(input, output) {
     prop.prot <- (input$N1*input$VE1 + input$N2*input$VE2)/input$N
     prop.need.prot <- c(1-1/input$R.opt,1-1/input$R.mod,1-1/input$R.pes)
     ## 
-    sd.prop.need.prot <- prop.need.prot*.3
+    sd.prop.need.prot <- prop.need.prot*input$pct.uncer
     #sd.prop.need.prot <- sqrt(prop.need.prot*(1-prop.need.prot)/100)
     
     par(oma=c(0,0,3,0))
@@ -75,10 +75,10 @@ shinyServer(function(input, output) {
     polygon(x=c(lower3.pes,upper3.pes,upper3.pes,lower3.pes),
             y=c(2,2,3,3),col=green.col,border=FALSE)
   
-    mtext(text="esimtated \n proportion \n protected",at=prop.prot,side=3)
-    mtext(text="Optimisitic",side=2,at=0,cex=.9)
-    mtext(text="Moderate",side=2,at=1.25,cex=.9)
-    mtext(text="Pessimisitic",side=2,at=2.5,cex=.9)
+    mtext(text="estimated \n proportion \n protected",at=prop.prot,side=3)
+    mtext(text="optimisitic",side=2,at=0,cex=.9)
+    mtext(text="moderate",side=2,at=1.25,cex=.9)
+    mtext(text="pessimistic",side=2,at=2.5,cex=.9)
     abline(v=prop.prot,lty=2,lwd=2,col=1)    
     par(fig=c(0, 1, 0, 1), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0), new=TRUE)
     plot(0, 0, type='n', bty='n', xaxt='n', yaxt='n')
