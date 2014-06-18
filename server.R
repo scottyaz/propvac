@@ -88,7 +88,7 @@ shinyServer(function(input, output) {
     
     plot(-100,-100,xlim=c(0,1),ylim=c(-.5,3.25),axes=F,xlab="",ylab="")
     points(c(.4,.4,.4),c(0,1.25,2.5),pch=19,col=c(sign.opt,sign.mod,sign.pes),cex=10)
-    mtext(text="Reccomended Action",at=.4,side=3,cex=1.2)
+    mtext(text="Summary",at=.4,side=3,cex=1.2)
     
     par(fig=c(0, 1, 0, 1), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0), new=TRUE)
     plot(0, 0, type='n', bty='n', xaxt='n', yaxt='n')
