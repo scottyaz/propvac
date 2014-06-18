@@ -5,7 +5,6 @@ library(shiny)
 
 shinyUI(fluidPage(
   titlePanel("Tool for Assessing Risk of Epidemic given OCV Vaccination Coverage Estimates"),
-  
     sidebarLayout(
       sidebarPanel(
         tags$head( tags$script(src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full", type = 'text/javascript'),
@@ -67,9 +66,13 @@ shinyUI(fluidPage(
            "at Johns Hopkins Bloomberg School of Public Health"
       ),
 mainPanel(
+  tabsetPanel(
+    tabPanel("Main",
   h3("Estimated Proportion Protected Compared to Vaccination Zones in 3 Different Scenarios"),
   plotOutput('my.plot'),
   "The interface between yellow and red in each corresponds to the estimate of 1-1/R:",
   tabPanel('Proportion Needed to Protect (point estimates)', tableOutput("table")),
-  h5("Warning: The above output is based on basic epidemic theory and should only be used as a rough guide. \n")
-  ))))
+  h5("Warning: The above output is based on basic epidemic theory and should only be used as a rough guide. These are based on the assumption that transmission is roughly person to person so if tranmsision occurs through contamination of water there will be no indirect protection and everyone should be vaccinated to be protected. \n")
+  ),
+  tabPanel("Experimental",plotOutput('ind.dir.plot'))))
+)))
