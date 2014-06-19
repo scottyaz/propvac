@@ -138,16 +138,18 @@ shinyServer(function(input, output) {
                      N=input$N)$par
    
     ## just to make sure another starting value doesn't get us where we need to go
-    if (fs.opt.novac == 1){
-      fs.opt.novac <- nlminb(start=input$N/1.5,
+    ## should be a while loop but this seems to break things online
+    n.tries <- 1
+    while(fs.opt.novac == 1 & input$R.opt > 1 & n.tries < 5000){
+      fs.opt.novac <- nlminb(start=sample(input$N,1),
                              objective=final.size.form,
                              lower=1,
                              upper=input$N-1,
                              prot=0,
                              R0=input$R.opt,
                              N=input$N)$par
+      n.tries <- n.tries + 1
     }
-    
     
     fs.opt.vac <- nlminb(start=input$N/3,
                            objective=final.size.form,
@@ -156,15 +158,16 @@ shinyServer(function(input, output) {
                            prot=dir.prot,
                            R0=input$R.opt,
                            N=input$N)$par
-    
-    if (fs.opt.vac == 1){
-      fs.opt.vac <- nlminb(start=input$N/1.5,
+    n.tries <- 1    
+    while(fs.opt.vac == 1 & input$R.opt*dir.prot/input$N>1 & n.tries < 5000){
+      fs.opt.vac <- nlminb(start=sample(input$N,1),
                            objective=final.size.form,
                            lower=1,
                            upper=input$N-1,
                            prot=dir.prot,
                            R0=input$R.opt,
                            N=input$N)$par
+      n.tries <- n.tries + 1      
     }
     
     indir.prot.opt <- max(fs.opt.novac - fs.opt.vac - dir.prot,0)
@@ -178,14 +181,17 @@ shinyServer(function(input, output) {
                            R0=input$R.mod,
                            N=input$N)$par
     
-    if (fs.mod.novac == 1){
-      fs.mod.novac <- nlminb(start=input$N/1.5,
+    
+    n.tries <- 1
+    while(fs.mod.novac == 1 & input$R.mod > 1 & n.tries < 5000){    
+      fs.mod.novac <- nlminb(start=sample(input$N,1),
                              objective=final.size.form,
                              lower=1,
                              upper=input$N-1,
                              prot=0,
                              R0=input$R.mod,
                              N=input$N)$par
+      n.tries <- n.tries + 1
     }
          
     fs.mod.vac <- nlminb(start=input$N/3,
@@ -196,14 +202,17 @@ shinyServer(function(input, output) {
                          R0=input$R.mod,
                          N=input$N)$par
     
-    if (fs.mod.vac == 1){
-      fs.mod.vac <- nlminb(start=input$N/1.5,
+    
+    n.tries <- 1    
+    while(fs.mod.vac == 1 & input$R.mod*dir.prot/input$N>1 & n.tries < 5000){      
+      fs.mod.vac <- nlminb(start=sample(input$N,1),
                            objective=final.size.form,
                            lower=1,
                            upper=input$N-1,
                            prot=dir.prot,
                            R0=input$R.mod,
                            N=input$N)$par
+      n.tries <- n.tries + 1
     }
       
     
@@ -218,8 +227,9 @@ shinyServer(function(input, output) {
                            R0=input$R.pes,
                            N=input$N)$par
     
-    if (fs.pes.novac==1){
-      fs.pes.novac <- nlminb(start=input$N/1.5,
+      n.tries <- 1
+      while(fs.pes.novac == 1 & input$R.pes > 1 & n.tries < 5000){    
+      fs.pes.novac <- nlminb(start=sample(input$N,1),
                              objective=final.size.form,
                              lower=1,
                              upper=input$N-1,
@@ -228,21 +238,24 @@ shinyServer(function(input, output) {
                              N=input$N)$par
     }
     
-    fs.pes.vac <- nlminb(start=input$N,
+    fs.pes.vac <- nlminb(start=input$N/3,
                          objective=final.size.form,
                          lower=1,
                          upper=input$N-1,
                          prot=dir.prot,
                          R0=input$R.pes,
                          N=input$N)$par
-    if (fs.pes.vac){
-      fs.pes.vac <- nlminb(start=input$N/1.5,
+    
+    n.tries <- 1    
+    while(fs.pes.vac == 1 & input$R.pes*dir.prot/input$N>1 & n.tries < 5000){      
+      fs.pes.vac <- nlminb(start=sample(input$N,1),
                            objective=final.size.form,
                            lower=1,
                            upper=input$N-1,
                            prot=dir.prot,
                            R0=input$R.pes,
                            N=input$N)$par
+      n.tries <- n.tries + 1
     }
   
     indir.prot.pes <- max(0,fs.pes.novac - fs.pes.vac - dir.prot)
