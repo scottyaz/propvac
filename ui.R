@@ -4,13 +4,9 @@
 library(shiny)
 
 shinyUI(fluidPage(
-  titlePanel("Tool for Assessing Risk of Epidemic given OCV Vaccination Coverage Estimates"),
+  titlePanel("Tool for Assessing the Impact of OCV Use on Protection and Epidemic Risk"),
     sidebarLayout(
       sidebarPanel(
-        tags$head( tags$script(src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full", type = 'text/javascript'),
-                   tags$script( "MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});", type='text/x-mathjax-config')
-        ),
-#    column(4,
            h3("Required Input:"),
            wellPanel(
            numericInput("N",
@@ -24,7 +20,7 @@ shinyUI(fluidPage(
                         min=0),
            numericInput("N2",
                         label=helpText("Number vaccinated with 2-doses"),
-                        value=5000,
+                        value=44000,
                         min=0)),
            #submitButton(text = "Submit"),          
            h3("Optional Input:"),
@@ -67,12 +63,21 @@ shinyUI(fluidPage(
       ),
 mainPanel(
   tabsetPanel(
-    tabPanel("Main",
-  h3("Estimated Proportion Protected Compared to Vaccination Zones in 3 Different Scenarios"),
-  plotOutput('my.plot'),
-  "The interface between yellow and red in each corresponds to the estimate of 1-1/R:",
-  tabPanel('Proportion Needed to Protect (point estimates)', tableOutput("table")),
-  h5("Warning: The above output is based on basic epidemic theory and should only be used as a rough guide. These are based on the assumption that transmission is roughly person to person so if tranmsision occurs through contamination of water there will be no indirect protection and everyone should be vaccinated to be protected. \n")
-  ),
-  tabPanel("Experimental",plotOutput('ind.dir.plot'))))
-)))
+    tabPanel("Direct and Indirect Protection",
+             HTML("<h3>WARNING: This application is under developement. Please consult the <a href=mailto:azman@jhu.edu?Subject=Cholera%20App>developer</a> before using this for decision making.</h3>"),
+             "This tool estimates the proportion of the population protected (direct and indirect), and the final number expected to be infected for a given population size and vaccine coverage (required inputs). We have provided 3 scenarios (estimates of the transmission efficiency of cholera) that we believe could characterize the observed epidemic in Juba (in early June-2014). Feel free to change the scenario reproductive numbers to reflect your beliefs. The circles on the right are guides to help illustrate the liklehood of transmission should cholera be introduced to this population with red representing situations where onward transmission would be very likley and green representing sitations where onward transmission is less likely.",
+             plotOutput('ind.dir.plot'),
+             h3("Considerations:"),
+             HTML("<ul>
+                <li>This represents a model of person to person transmission. If transmission is thorugh the environment (e.g. transmission predonminatly through water system), there will be little to no indirect protection.</li>
+                <li>The final size represents the number infected (i.e., those who gain temporary immunity) and we do not expect these to represent clincal cases that would show up to a clinic. The attack rates should be scaled down by a factor representing your best guess for the ratio of severe disease to infections.</li>
+                <li>By default we are assuming 44% vaccine effectivness for a single dose, an average derived from only two studies who measured this as a secondary outcome and in both cases the confidence interval spanned null. To be conservative you may consider setting the 1-dose effectivness (in optional input) to 0.</li>
+                </ul>")),
+    tabPanel("Proportion Protected",
+             HTML("<h3>WARNING: This application is under developement. Please consult the <a href=mailto:azman@jhu.edu?Subject=Cholera%20App>developer</a> before using this for decision making.</h3>"),             
+             plotOutput('my.plot'),
+             "The interface between yellow and red in each corresponds to the estimate of 1-1/R:",
+             tabPanel('Proportion Needed to Protect (point estimates)', tableOutput("table")),
+             h5("Warning: The above output is based on basic epidemic theory and should only be used as a rough guide. These are based on the assumption that transmission is roughly person to person so if tranmsision occurs through contamination of water there will be no indirect protection and everyone should be vaccinated to be protected. \n")
+  )
+           )))))
