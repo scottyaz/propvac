@@ -146,12 +146,12 @@ shinyServer(function(input, output) {
     }
     
     fs.opt.vac <- nlminb(start=input$N/3,
-                           objective=final.size.form,
-                           lower=1,
-                           upper=input$N-1,
-                           prot=dir.prot,
-                           R0=input$R.opt,
-                           N=input$N)$par
+                         objective=final.size.form,
+                         lower=1,
+                         upper=input$N-1,
+                         prot=dir.prot,
+                         R0=input$R.opt,
+                         N=input$N)$par
     n.tries <- 1    
     while(fs.opt.vac == 1 & input$R.opt*dir.prot/input$N>1 & n.tries < 5000){
       fs.opt.vac <- nlminb(start=sample(input$N,1),
@@ -166,11 +166,11 @@ shinyServer(function(input, output) {
     
     ## in cases where there is no outbreak once vaccinated, the remainder of people are considered in
     ## directly protected
-    if (fs.opt.vac == 1){
-      indir.prot.opt <- input$N-dir.prot
-    } else {
+    #if (fs.opt.vac == 1){
+    #  indir.prot.opt <- input$N-dir.prot
+    #} else {
       indir.prot.opt <- max(fs.opt.novac - fs.opt.vac - dir.prot,0)      
-    }
+    #}
     
     #moderate
     fs.mod.novac <- nlminb(start=input$N/3,
@@ -216,11 +216,11 @@ shinyServer(function(input, output) {
     }
       
     
-    if (fs.mod.vac == 1){
-      indir.prot.mod <- input$N-dir.prot
-    } else {
+    #if (fs.mod.vac == 1){
+    #  indir.prot.mod <- input$N-dir.prot
+    #} else {
       indir.prot.mod <- max(fs.mod.novac - fs.mod.vac - dir.prot,0)      
-    }
+    #}
     
     #pessimistic
     fs.pes.novac <- nlminb(start=input$N/3,
@@ -262,26 +262,28 @@ shinyServer(function(input, output) {
       n.tries <- n.tries + 1
     }
     
-    if (fs.pes.vac == 1){
-      indir.prot.pes <- input$N-dir.prot
-    } else {
+    #if (fs.pes.vac == 1){
+    #  indir.prot.pes <- input$N-dir.prot
+    #} else {
       indir.prot.pes <- max(fs.pes.novac - fs.pes.vac - dir.prot,0)      
-    }
+    #}
       
     layout(matrix(c(1,1,1,2),nrow=1))
-    par(oma=c(0,0,3,0))
-    plot(-100,-100,xlim=c(0,1),ylim=c(-.5,3.25),axes=F,xlab="proportion of population",ylab="scenarios")
+    par(oma=c(0,0,3,0),mar=c(5.1,5.5,4.1,2.1))
+    plot(-100,-100,xlim=c(0,1),ylim=c(-.5,3.25),axes=F,xlab="proportion of population",ylab="")
     axis(1)
     
-    red.col = rgb(red=1,green=0,blue=0,alpha=.4)
-    dark.red.col = rgb(252,146,114,alpha=200,maxColorValue=255)
-    light.red.col = rgb(252,187,161,alpha=200,maxColorValue=255)
+    susceptible.col = rgb(202,178,214,alpha=200,maxColorValue=255)
+    infected.col = rgb(227,26,28,alpha=200,maxColorValue=255)
+    direct.prot.col = rgb(51,160,44,alpha=200,maxColorValue=255)
+    cases.prev.col = rgb(186,186,186,alpha=200,maxColorValue=255)
     
+    red.col = rgb(red=1,green=0,blue=0,alpha=.4)  
     yellow.col = "yellow"#rgb(red=255,green=255,blue=204,maxColorValue=255,alpha=.4)
     light.green.col = rgb(229,245,224,alpha=200,maxColorValue=255)
     green.col = rgb(49,163,84,alpha=200,maxColorValue=255)
     grey.col = rgb(224,224,224,alpha=200,maxColorValue=255)
-    
+    light.blue.col = rgb(158,202,225,alpha=200,maxColorValue=255)
     ## bounds for opt scen
     lower1.opt<- 0
     upper1.opt <- dir.prot/input$N
@@ -296,14 +298,18 @@ shinyServer(function(input, output) {
     upper4.opt <- 1
     
     polygon(x=c(lower1.opt,upper1.opt,upper1.opt,lower1.opt),
-            y=c(-.5,-.5,0.5,0.5),col=green.col,border=FALSE)
-    polygon(x=c(lower2.opt,upper2.opt,upper2.opt,lower2.opt),
-            y=c(-.5,-.5,0.5,0.5),col=light.green.col,border=FALSE)
-    polygon(x=c(lower3.opt,upper3.opt,upper3.opt,lower3.opt),
-            y=c(-.5,-.5,0.5,0.5),col=light.red.col,border=FALSE)
+            y=c(0,0,0.5,0.5),col=direct.prot.col,border=FALSE)
+    polygon(x=c(lower2.opt,upper3.opt,upper3.opt,lower2.opt),
+            y=c(0,0,0.5,0.5),col=susceptible.col,border=FALSE)
+#   polygon(x=c(lower3.opt,upper3.opt,upper3.opt,lower3.opt),
+#            y=c(0,-0,0.5,0.5),col=light.red.col,border=FALSE)
     polygon(x=c(lower4.opt,upper4.opt,upper4.opt,lower4.opt),
-            y=c(-.5,-.5,0.5,0.5),col=dark.red.col,border=FALSE)
+            y=c(0,0,0.5,0.5),col=infected.col,border=FALSE)
     
+    # now cumulative cases prevented by vaccination
+    polygon(x=c(lower1.opt,upper2.opt,upper2.opt,lower1.opt),
+          y=c(-.5,-.5,-.025,-.025),col=cases.prev.col,border=FALSE)
+
     ## moderate
     lower1.mod<- 0
     upper1.mod <- dir.prot/input$N
@@ -318,14 +324,17 @@ shinyServer(function(input, output) {
     upper4.mod <- 1
     
     polygon(x=c(lower1.mod,upper1.mod,upper1.mod,lower1.mod),
-            y=c(.75,.75,1.75,1.75),col=green.col,border=FALSE)
-    polygon(x=c(lower2.mod,upper2.mod,upper2.mod,lower2.mod),
-            y=c(.75,.75,1.75,1.75),col=light.green.col,border=FALSE)
-    polygon(x=c(lower3.mod,upper3.mod,upper3.mod,lower3.mod),
-            y=c(.75,.75,1.75,1.75),col=light.red.col,border=FALSE)
+            y=c(1.25,1.25,1.75,1.75),col=green.col,border=FALSE)
+    polygon(x=c(lower2.mod,upper3.mod,upper3.mod,lower2.mod),
+            y=c(1.25,1.25,1.75,1.75),col=susceptible.col,border=FALSE)
+   # polygon(x=c(lower3.mod,upper3.mod,upper3.mod,lower3.mod),
+  #          y=c(.75,.75,1.75,1.75),col=light.red.col,border=FALSE)
     polygon(x=c(lower4.mod,upper4.mod,upper4.mod,lower4.mod),
-            y=c(.75,.75,1.75,1.75),col=dark.red.col,border=FALSE)
+            y=c(1.25,1.25,1.75,1.75),col=infected.col,border=FALSE)
     
+    ## cumulative cases prevented
+  polygon(x=c(lower1.mod,upper2.mod,upper2.mod,lower1.mod),
+        y=c(.75,.75,1.225,1.225),col=cases.prev.col,border=FALSE)
     
     ## pessimistic
     lower1.pes<- 0
@@ -341,20 +350,31 @@ shinyServer(function(input, output) {
     upper4.pes <- 1
     
     polygon(x=c(lower1.pes,upper1.pes,upper1.pes,lower1.pes),
-            y=c(2,2,3,3),col=green.col,border=FALSE)
-    polygon(x=c(lower2.pes,upper2.pes,upper2.pes,lower2.pes),
-            y=c(2,2,3,3),col=light.green.col,border=FALSE)
-    polygon(x=c(lower3.pes,upper3.pes,upper3.pes,lower3.pes),
-            y=c(2,2,3,3),col=light.red.col,border=FALSE)
+            y=c(2.5,2.5,3,3),col=direct.prot.col,border=FALSE)
+    polygon(x=c(lower2.pes,upper3.pes,upper3.pes,lower2.pes),
+            y=c(2.5,2.5,3,3),col=susceptible.col,border=FALSE)
+    #polygon(x=c(lower3.pes,upper3.pes,upper3.pes,lower3.pes),
+    #        y=c(2,2,3,3),col=light.red.col,border=FALSE)
     polygon(x=c(lower4.pes,upper4.pes,upper4.pes,lower4.pes),
-            y=c(2,2,3,3),col=dark.red.col,border=FALSE)
+            y=c(2.5,2.5,3,3),col=infected.col,border=FALSE)
     
+    polygon(x=c(lower1.pes,upper2.pes,upper2.pes,lower1.pes),
+        y=c(2,2,2.475,2.475),col=cases.prev.col,border=FALSE)
   #  mtext(text="estimated \n proportion \n protected",at=prop.prot,side=3)
-    mtext(text="optimisitic",side=2,at=0,cex=.9)
-    mtext(text="moderate",side=2,at=1.25,cex=.9)
-    mtext(text="pessimistic",side=2,at=2.5,cex=.9)
-    #abline(v=prop.prot,lty=2,lwd=2,col=1)    
     
+    mtext(text="optimisitic",side=2,at=0,cex=1.1,line=3.2)
+    mtext(text="cases \n prevented",side=2,at=-.25,cex=.8,line=-2,las=1)
+    mtext(text="",side=2,at=.25,cex=.8,line=-2,las=1)
+    
+
+    mtext(text="moderate",side=2,at=1.25,cex=1.1,line=3.2)
+    mtext(text="cases \n prevented",side=2,at=1,cex=.8,line=-2,las=1)
+    mtext(text="",side=2,at=1.5,cex=.8,line=-2,las=1)
+    
+    mtext(text="pessimistic",side=2,at=2.5,cex=1.1,line=3.2)
+    mtext(text="cases \n prevented",side=2,at=2.25,cex=.8,line=-2,las=1)
+    mtext(text="",side=2,at=2.75,cex=.8,line=-2,las=1)
+    #abline(v=prop.prot,lty=2,lwd=2,col=1)    
   
     ## stop signs
     prop.prot <- (input$N1*input$VE1 + input$N2*input$VE2)/input$N
@@ -366,11 +386,11 @@ shinyServer(function(input, output) {
     sign.pes <- ifelse(prop.prot < prop.need.prot[3], "red",ifelse(prop.prot <  prop.need.prot[3]+sd.prop.need.prot,"yellow","green"))
   
     plot(-100,-100,xlim=c(0,1),ylim=c(-.5,3.25),axes=F,xlab="",ylab="")
-    points(c(.4,.4,.4),c(0,1.25,2.5),pch=19,col=c(sign.opt,sign.mod,sign.pes),cex=10)
+    points(c(.4,.4,.4),c(0,1.25,2.5),pch=19,col=c(sign.opt,sign.mod,sign.pes),cex=15)
     par(fig=c(0, 1, 0, 1), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0), new=TRUE)
     plot(0, 0, type='n', bty='n', xaxt='n', yaxt='n')
     
-    legend("topleft",c("directly protected","indirectly protected","susceptible - not infected","susceptible - infected"),col=c(green.col,light.green.col,light.red.col,dark.red.col),lty=1,
+    legend("topleft",c("directly protected","uninfected (susceptible)","infected"),col=c(direct.prot.col,susceptible.col,infected.col),lty=1,
            lwd=4,bty="n",cex=2)
     
     mtext("Level of Population Protection",side=3,outer=TRUE)

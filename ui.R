@@ -69,10 +69,19 @@ mainPanel(
              plotOutput('ind.dir.plot'),
              h3("Considerations:"),
              HTML("<ul>
-                <li>This represents a model of person to person transmission. If transmission is thorugh the environment (e.g. transmission predonminatly through water system), there will be little to no indirect protection.</li>
+                <li>The estimates here are shown as fixed points but in reality there is considerable uncertainity. We are working hard to illustrate uncertainitny in future versions but in the meantime be conservative when using these results and consult the developers if any questions arise. </li>
+                <li>This represents a model of person to person transmission. If transmission is thorugh the environment (e.g. transmission predominatly through water system), there will be little to no indirect protection.</li>
                 <li>The final size represents the number infected (i.e., those who gain temporary immunity) and we do not expect these to represent clincal cases that would show up to a clinic. The attack rates should be scaled down by a factor representing your best guess for the ratio of severe disease to infections.</li>
                 <li>By default we are assuming 44% vaccine effectivness for a single dose, an average derived from only two studies who measured this as a secondary outcome and in both cases the confidence interval spanned null. To be conservative you may consider setting the 1-dose effectivness (in optional input) to 0.</li>
-                </ul>")),
+                </ul>"),
+             h3("Definitions:"),
+             HTML("<ul>
+                <li>Cases Prevented: This is the difference in attack rates between epidemics with and without vaccine</li>
+                <li>Directly Protected: This is the vaccine efficacy weighted proportion of the population protected by vaccine</li>
+                <li>Uninfected (Susceptible): This is the proportion of people who are unvaccinated who will ultimatley not get infected in an epidemic</li>
+                <li>Infected: This is the proportion of people who are unvaccinated who will ultimatley get infected in an epidemic</li>
+                </ul>")             
+             ),
     tabPanel("Proportion Protected",
              HTML("<h3>WARNING: This application is under developement. Please consult the <a href=mailto:azman@jhu.edu?Subject=Cholera%20App>developer</a> before using this for decision making.</h3>"),             
              plotOutput('my.plot'),
